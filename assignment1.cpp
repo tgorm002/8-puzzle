@@ -13,6 +13,7 @@ vector<char> vec2;
 vector<char> vec3;
 
 int total, maxNumInQueue, maxDepth, totalMisplaced = 0;
+int prevTotalDistance, prevMisplaced = 100;
 char prev1[3], prev2[3], prev3[3];
 
 void UniformCostSearch(char arr1[], char arr2[], char arr3[], queue<char>hehe69);
@@ -462,6 +463,11 @@ void manhattanHeuristic(char arr1[], char arr2[], char arr3[], queue<char> qu){
     }
     
     int totalDistance = getTotalDistance(arr1,arr2,arr3);
+    if(prevTotalDistance >= totalDistance) {
+        maxDepth++;
+        prevTotalDistance = totalDistance;
+    }
+
     cout << "total distance:" << totalDistance << endl;
     printTable(arr1, arr2, arr3);
 
@@ -883,6 +889,10 @@ void misplacedHeuristic(char arr1[], char arr2[], char arr3[], queue<char> qu) {
     
     int numMisplaced = getTotalMisplaced(arr1, arr2, arr3);
     cout << "total misplaced:" << numMisplaced << endl;
+    if(prevMisplaced >= numMisplaced) {
+        maxDepth++;
+        prevMisplaced = numMisplaced;
+    }
     totalMisplaced = 0;
     //may want to print table here
     if(arr1[0] == '0') { // 2 cases: top left 0 //check if moving the blank space in any direction lowers total mispalced
@@ -1579,34 +1589,37 @@ void UniformCostSearch(char arr1[], char arr2[], char arr3[], queue<char> qu) {
 int main() {
     srand (time(NULL));
     char loc1, loc2, loc3, loc4, loc5, loc6, loc7, loc8, loc9;
-    int numChoice;
+    int numChoice, defaultOrCreate;
     char row1[3], row2[3], row3[3];
     queue<char> hehe;
 
-    cout << "Welcome to my 8-puzzle solver :)" << endl;
-    cout << "Enter your puzzle, use a zero to represent the blank" << endl;
-    cout << "Enter the first row, use space or tabs between numbers" << endl;
-    cin >> loc1;
-    row1[0] = loc1;
-    cin >> loc2;
-    row1[1] = loc2;
-    cin >> loc3;
-    row1[2] = loc3;
-    cout << "Enter the second row, use space or tabs between numbers" << endl;
-    cin >> loc4;
-    row2[0] = loc4;
-    cin >> loc5;
-    row2[1] = loc5;
-    cin >> loc6;
-    row2[2] = loc6;
-    cout << "Enter the third row, use space or tabs between numbers" << endl;
-    cin >> loc7;
-    row3[0] = loc7;
-    cin >> loc8;
-    row3[1] = loc8;
-    cin >> loc9;
-    row3[2] = loc9;
-    printTable(row1, row2, row3);
+    cout << "Welcome to my 8-puzzle solver. Enter '1' to use a default puzzle or '2' to create your own." << endl;
+    cin >> defaultOrCreate;
+    if(defaultOrCreate == 2) {
+        cout << "Enter your puzzle, use a zero to represent the blank" << endl;
+        cout << "Enter the first row, use space or tabs between numbers" << endl;
+        cin >> loc1;
+        row1[0] = loc1;
+        cin >> loc2;
+        row1[1] = loc2;
+        cin >> loc3;
+        row1[2] = loc3;
+        cout << "Enter the second row, use space or tabs between numbers" << endl;
+        cin >> loc4;
+        row2[0] = loc4;
+        cin >> loc5;
+        row2[1] = loc5;
+        cin >> loc6;
+        row2[2] = loc6;
+        cout << "Enter the third row, use space or tabs between numbers" << endl;
+        cin >> loc7;
+        row3[0] = loc7;
+        cin >> loc8;
+        row3[1] = loc8;
+        cin >> loc9;
+        row3[2] = loc9;
+        printTable(row1, row2, row3);
+    }
     cout << "Enter your choice of algorithm:" << endl;
     cout << "   1) Uniform Cost Search" << endl;
     cout << "   2) A* with the Misplaced Tile heuristic" << endl;
@@ -1629,27 +1642,9 @@ int main() {
             prev3[i] = row3[i];
         }
         misplacedHeuristic(row1,row2,row3,hehe);
-        float num = 0;
-        num = log10(total);
-        num = num / 1.44444444444;
-        float logBase10Inv;
-        logBase10Inv = pow(10,num);
-        maxDepth = ceil(logBase10Inv);
-        if(maxDepth < total) {
-            maxDepth = total;
-        }
     }
     else if(numChoice == 3){
         manhattanHeuristic(row1,row2,row3, hehe);
-        float num = 0;
-        num = log10(total);
-        num = num / 1.44444444444;
-        float logBase10Inv;
-        logBase10Inv = pow(10,num);
-        maxDepth = ceil(logBase10Inv);
-        if(maxDepth < total) {
-            maxDepth = total;
-        }
     }
     else { //case where user didnt enter a valid algorithm
         cout << "You're stupid and didnt pick an algorithm" << endl;
@@ -1659,59 +1654,3 @@ int main() {
     cout << "max number of nodes in the queue: " << maxNumInQueue << endl;
     return 0;
 }
-
-//All the cases I know I can solve:
-//ALL OF THESE ARE UNIFORM COST SEARCH VALUES
-// 1 8 2
-// 0 4 3
-// 7 6 5
-//
-//4922 nodes recursed with no reccuring states
-//10,270 nodes recursed with reccuring states
-
-//for testing
-// 1   2   3   
-// 4   0   5   
-// 7   8   6   
-//
-//17 nodes recursed with no reccuring states
-//17 nodes recursed with reccuring states
-//THIS WORKED FOR MISPLACED TILES
-//works for manhattan
-
-// 1 2 3
-// 4 0 8
-// 7 6 5
-//168 nodes recursed with no recurring states
-//286 nodes recursed with recurring states
-//THIS SEGFAULTED FOR MISPALCED TILES
-//does not seg fault for manhattan
-
-// 0   1   3   
-// 4   2   5   
-// 7   8   6  
-// 23 nodes recused with no recurring states
-//runs fast for manhattan
-
-// 3 0 8
-// 5 2 1
-// 7 4 6
-//not even sure if this is doable but i run out of memory
-//fails manhattan too 
-
-// 4 1 2
-// 5 3 0
-// 7 8 6
-// ran fast and expanded 670 nodes
-//ran really fast for manhattan and only expanded 11 nodes
-
-// For manhattan heuristic:
-// 1 2 3
-// 4 8 0
-// 7 6 5 
-// runs fast
-
-// 1 2 3
-// 4 0 6
-// 7 5 8
-// runs fast
