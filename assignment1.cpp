@@ -13,12 +13,13 @@ vector<char> vec2;
 vector<char> vec3;
 
 int total, maxNumInQueue, maxDepth, totalMisplaced = 0;
-int prevTotalDistance, prevMisplaced = 100;
+int prevTotalDistance = 100;
+int prevMisplaced = 100;
 char prev1[3], prev2[3], prev3[3];
 
-void UniformCostSearch(char arr1[], char arr2[], char arr3[], queue<char>hehe69);
-void misplacedHeuristic(char arr1[], char arr2[], char arr3[], queue<char>hehe69);
-void manhattanHeuristic(char arr1[], char arr2[], char arr3[], queue<char>hehe69);
+void UniformCostSearch(char arr1[], char arr2[], char arr3[], queue<char>q);
+void misplacedHeuristic(char arr1[], char arr2[], char arr3[], queue<char>q);
+void manhattanHeuristic(char arr1[], char arr2[], char arr3[], queue<char>q);
 
 // struct Queue { //i had a struct here but decided i didnt need it 
 void printTable(char arr1[], char arr2[], char arr3[]){
@@ -89,7 +90,7 @@ void convertQueueToArray(queue<char> temp) {
 }
 
 int getTotalMisplaced(char arr1[], char arr2[], char arr3[]){ //want to increase total here
-    total++;
+    //total++;
     if(arr1[0] != '1'){
         totalMisplaced++;
     } 
@@ -213,6 +214,7 @@ void getBestTotalMisplaced(queue<char> temp, char check1[], char check2[], char 
             copy.pop();
         }
     }
+    total++;
     return misplacedHeuristic(a1,a2,a3, emptyQu);
 }
 
@@ -463,6 +465,8 @@ void manhattanHeuristic(char arr1[], char arr2[], char arr3[], queue<char> qu){
     }
     
     int totalDistance = getTotalDistance(arr1,arr2,arr3);
+    // cout << "prev distance" << prevTotalDistance<< endl;
+    // cout << "total distance" << totalDistance << endl;
     if(prevTotalDistance >= totalDistance) {
         maxDepth++;
         prevTotalDistance = totalDistance;
@@ -1589,7 +1593,7 @@ void UniformCostSearch(char arr1[], char arr2[], char arr3[], queue<char> qu) {
 int main() {
     srand (time(NULL));
     char loc1, loc2, loc3, loc4, loc5, loc6, loc7, loc8, loc9;
-    int numChoice, defaultOrCreate;
+    int numChoice, defaultOrCreate, difficulty;
     char row1[3], row2[3], row3[3];
     queue<char> hehe;
 
@@ -1619,6 +1623,30 @@ int main() {
         cin >> loc9;
         row3[2] = loc9;
         printTable(row1, row2, row3);
+    }
+    else if(defaultOrCreate){
+        cout << "We have 4 different levels for puzzles. 1 is easy and 4 is hard. Enter the difficulty you want:" << endl;
+        cin >> difficulty;
+        if(difficulty == 1) {
+            row1[0] = '1'; row1[1] = '2'; row1[2] = '3'; //123
+            row2[0] = '4'; row2[1] = '5'; row2[2] = '6'; //456
+            row3[0] = '7'; row3[1] = '8'; row3[2] = '8'; //780
+        }
+        else if(difficulty == 2) {
+            row1[0] = '1'; row1[1] = '2'; row1[2] = '3'; //123
+            row2[0] = '4'; row2[1] = '8'; row2[2] = '0'; //480
+            row3[0] = '7'; row3[1] = '6'; row3[2] = '5'; //765
+        }
+        else if(difficulty == 3) {
+            row1[0] = '0'; row1[1] = '1'; row1[2] = '3'; //013
+            row2[0] = '5'; row2[1] = '2'; row2[2] = '6'; //526
+            row3[0] = '4'; row3[1] = '7'; row3[2] = '8'; //478
+        }
+        else if(difficulty == 4) {
+            row1[0] = '1'; row1[1] = '8'; row1[2] = '5'; //185
+            row2[0] = '7'; row2[1] = '0'; row2[2] = '2'; //702
+            row3[0] = '6'; row3[1] = '4'; row3[2] = '3'; //643
+        }
     }
     cout << "Enter your choice of algorithm:" << endl;
     cout << "   1) Uniform Cost Search" << endl;
